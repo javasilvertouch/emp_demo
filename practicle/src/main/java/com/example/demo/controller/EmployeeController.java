@@ -1,0 +1,157 @@
+
+package com.example.demo.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.CreateEmployeeDTO;
+import com.example.demo.model.Department;
+import com.example.demo.model.DepartmentDTO;
+import com.example.demo.model.Employee;
+import com.example.demo.model.EmployeeDTO;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.service.DepartmentService;
+import com.example.demo.service.EmployeeService;
+
+import jakarta.validation.Valid;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+    private final EmployeeService service;
+    private final DepartmentService dservice;
+    private final DepartmentRepository departmentRepository;
+
+    public EmployeeController(EmployeeService service,DepartmentService dservice, DepartmentRepository departmentRepository) {
+        this.service = service;
+        this.dservice = dservice;
+        this.departmentRepository = departmentRepository;
+    }
+
+    @GetMapping
+    public List<EmployeeDTO> getAllEmployees() {
+        return service.getAllEmployees();
+    }
+    
+    @GetMapping("/{empId}")
+    public ResponseEntity<?> getEmployeesByid(@PathVariable String empId) {
+    	EmployeeDTO employees = service.getEmployeeById(empId);
+		if (employees == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found with ID: " + empId);
+		}
+        
+
+        return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/department/{deptId}")
+    public ResponseEntity<?> getEmployeesByDepartment(@PathVariable String deptId) {
+    	List<EmployeeDTO> employees = service.getEmployeesByDepartmentAsDTO(deptId);
+
+        if (employees == null || employees.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("No employees found for department ID: " + deptId);
+        }
+
+        return ResponseEntity.ok(employees);
+    }
+
+    @PostMapping("/department/{deptId}")
+    public ResponseEntity<?> addEmployeeToDepartment(
+            @PathVariable String deptId,
+            @Valid @RequestBody CreateEmployeeDTO dto) {
+
+        // Optional: Check if dept exists before adding
+       DepartmentDTO deptOpt = dservice.getDepartmentById(deptId);
+        if (deptOpt == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Department ID '" + deptId + "' not found.");
+        }
+        
+        Optional<Department> departmentOpt = departmentRepository.findById(deptOpt.id);
+        if (departmentOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Department entity for ID '" + deptOpt.id + "' not found.");
+        }
+
+        EmployeeDTO edto= service.getEmployeeById(dto.id);
+        
+        if (edto != null) {
+        	return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Employee with ID '" + dto.id + "' already exists.");
+        };
+        
+        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+            return ResponseEntity.badRequest().body("Email is required.");
+        }
+
+        // Basic email format validation (checks for one '@' and one dot after '@')
+        if (!dto.getEmail().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return ResponseEntity.badRequest().body("Invalid email format.");
+        }
+        
+		if (dto.getName() == null || dto.getName().isBlank()) {
+			return ResponseEntity.badRequest().body("Name is required.");
+		}
+		
+		if (dto.getPosition() == null || dto.getPosition().isBlank()) {
+			return ResponseEntity.badRequest().body("Position is required.");
+		}
+		if (dto.getId() == null || dto.getId().isBlank()) {
+			return ResponseEntity.badRequest().body("ID is required.");
+		}
+		if (dto.getSalary() < 0) {
+			return ResponseEntity.badRequest().body("Salary must be a positive number.");
+		}
+
+        Employee emp = new Employee();
+        emp.setId(dto.id);
+        emp.setName(dto.name);
+        emp.setEmail(dto.email);
+        emp.setPosition(dto.position);
+        emp.setSalary(dto.salary);
+        emp.setDepartment(departmentOpt.get());
+        Employee saved = service.addEmployeeToDepartment(emp);
+        
+		EmployeeDTO employeeDTO = new EmployeeDTO(saved.getId(), saved.getName(), saved.getEmail(), saved.getPosition(),
+				saved.getSalary());
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body("Employee added to department ID '" + deptId + "': " + employeeDTO);
+    }
+	
+
+    @DeleteMapping("/department/{deptId}/{empId}")
+    public ResponseEntity<?> deleteEmployeeFromDepartment(@PathVariable String deptId, @PathVariable String empId) {
+    	 EmployeeDTO edto= service.getEmployeeByIdAndDepartments(empId,deptId);
+        if (edto == null) {
+            return ResponseEntity.badRequest().body("Employee doesn't belong to this department or Employee not found");
+        }
+        service.deleteEmployeeFromDepartment(deptId, empId);
+        return ResponseEntity.badRequest().body("Employee with ID '" + empId + "' deleted from department ID '" + deptId + "'.");
+    }
+    
+    @DeleteMapping("/department/{empId}")
+    public void deleteEmployeeFromDepartment1(@PathVariable String empId) {
+    	 EmployeeDTO edto= service.getEmployeeById(empId);
+        if (edto == null) {
+           // return ResponseEntity.badRequest().body("Employee doesn't belong to this department or Employee not found");
+        }
+        service.deleteEmployeeFromDepartment("", empId);
+        //return ResponseEntity.badRequest().body("Employee with ID '" + empId );
+       // return ResponseEntity.ok("Employee with ID '" + empId + "' deleted successfully");
+        
+    }
+}

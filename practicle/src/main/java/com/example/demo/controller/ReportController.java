@@ -22,12 +22,21 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
+  
+	/**
+	 * Handles GET requests to /api/report/download.
+	 * Generates a report based on the provided name and parameters.
+	 * 
+	 * @param name the name of the report
+	 * @return a ResponseEntity containing the generated report as a byte array
+	 * @throws Exception if an error occurs during report generation
+	 */
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadReport(
-            @RequestParam(defaultValue = "your_report") String name
+            @RequestParam(defaultValue = "emp_info") String name
     ) throws Exception {
         Map<String, Object> params = new HashMap<>();
-        params.put("title", "Sample Report"); // Example parameter
+        params.put("title", "Employee Report"); 
 
         byte[] data = reportService.generateReport(name, params);
 

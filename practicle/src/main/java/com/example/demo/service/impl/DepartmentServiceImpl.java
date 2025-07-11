@@ -21,7 +21,12 @@ public class DepartmentServiceImpl implements DepartmentService {
 	 * this.repository = repository; }
 	 */
  
-    
+	/**
+	 * Retrieves all departments and their employees.
+	 *
+	 * @return a list of DepartmentDTO objects containing department details and
+	 *         associated employees
+	 */
     @Override
     public List<DepartmentDTO> getAllDepartments() {
         return repository.findAll().stream().map(dept -> {
@@ -33,6 +38,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         }).toList();
     }
 
+    
+    /**
+     * Retrieves a department by its ID along with all associated employees.
+     *
+     * @param deptId the ID of the department to retrieve
+     * @return a DepartmentDTO containing department details and its employees,
+     *         or null if the department is not found
+     */
 	@Override
 	public DepartmentDTO getDepartmentById(String deptId) {
 		return repository.findById(deptId).map(dept -> {

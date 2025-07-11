@@ -8,6 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig {
 
+	/**
+	 * Configures CORS settings for the application. This allows cross-origin
+	 * requests from specified origins.
+	 *
+	 * @return a WebMvcConfigurer that configures CORS mappings
+	 */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

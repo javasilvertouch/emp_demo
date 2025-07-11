@@ -19,6 +19,11 @@ public class DepartmentController {
         this.service = service;
     }
 
+	/**
+	 * Handles GET requests to /departments. Retrieves a list of all departments.
+	 *
+	 * @return a list of DepartmentDTO objects representing all departments
+	 */
     @GetMapping
     public List<DepartmentDTO> getAllDepartments() {
         return service.getAllDepartments();

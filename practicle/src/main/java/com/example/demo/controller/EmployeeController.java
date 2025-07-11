@@ -40,11 +40,22 @@ public class EmployeeController {
         this.departmentRepository = departmentRepository;
     }
 
+	/**
+	 * Handles GET requests to /employees. Retrieves a list of all employees.
+	 *
+	 * @return a list of EmployeeDTO objects representing all employees
+	 */
     @GetMapping
     public List<EmployeeDTO> getAllEmployees() {
         return service.getAllEmployees();
     }
     
+        /**
+         * Handles GET requests to /employees/{empId}.
+         * Retrieves an employee by their ID.
+         * * @param empId the ID of the employee to retrieve
+         * * @return
+         */
     @GetMapping("/{empId}")
     public ResponseEntity<?> getEmployeesByid(@PathVariable String empId) {
     	EmployeeDTO employees = service.getEmployeeById(empId);
@@ -56,6 +67,14 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
+	/**
+	 * Handles GET requests to /employees/department/{deptId}. Retrieves a list of
+	 * employees belonging to a specific department.
+	 *
+	 * @param deptId the ID of the department
+	 * @return a list of EmployeeDTO objects representing employees in the specified
+	 *         department
+	 */
     @GetMapping("/department/{deptId}")
     public ResponseEntity<?> getEmployeesByDepartment(@PathVariable String deptId) {
     	List<EmployeeDTO> employees = service.getEmployeesByDepartmentAsDTO(deptId);
@@ -69,6 +88,15 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
+    
+	/**
+	 * Handles POST requests to /employees/department/{deptId}. Adds a new employee
+	 * to a specific department.
+	 *
+	 * @param deptId the ID of the department
+	 * @param dto    the CreateEmployeeDTO containing employee details
+	 * @return a ResponseEntity indicating the result of the operation
+	 */
     @PostMapping("/department/{deptId}")
     public ResponseEntity<?> addEmployeeToDepartment(
             @PathVariable String deptId,
@@ -133,6 +161,7 @@ public class EmployeeController {
     }
 	
 
+   
     @DeleteMapping("/department/{deptId}/{empId}")
     public ResponseEntity<?> deleteEmployeeFromDepartment(@PathVariable String deptId, @PathVariable String empId) {
     	 EmployeeDTO edto= service.getEmployeeByIdAndDepartments(empId,deptId);
@@ -143,15 +172,19 @@ public class EmployeeController {
         return ResponseEntity.badRequest().body("Employee with ID '" + empId + "' deleted from department ID '" + deptId + "'.");
     }
     
+	/**
+	 * Handles DELETE requests to /department/{empId}. Deletes an employee from a emp id
+	 * 
+	 *
+	 * @param empId the ID of the employee to delete
+	 * @return a ResponseEntity indicating the result of the operation
+	 */
     @DeleteMapping("/department/{empId}")
     public void deleteEmployeeFromDepartment1(@PathVariable String empId) {
     	 EmployeeDTO edto= service.getEmployeeById(empId);
-        if (edto == null) {
-           // return ResponseEntity.badRequest().body("Employee doesn't belong to this department or Employee not found");
+        if (edto != null) {
+        	service.deleteEmployeeFromDepartment("", empId);
         }
-        service.deleteEmployeeFromDepartment("", empId);
-        //return ResponseEntity.badRequest().body("Employee with ID '" + empId );
-       // return ResponseEntity.ok("Employee with ID '" + empId + "' deleted successfully");
         
     }
 }

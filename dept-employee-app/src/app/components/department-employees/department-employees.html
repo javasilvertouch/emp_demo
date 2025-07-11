@@ -1,64 +1,81 @@
-<div class="container mt-5">
-    <h3 class="mb-4">Employees Details</h3>
+<!-- Background section -->
+<div class="py-5" style="background-color: #f8f9fa; min-height: 100vh;">
+  <div class="container d-flex justify-content-center">
+    <div class="w-100" style="max-width: 900px;">
 
-    <div class="row g-2 align-items-center mb-4">
-  <label for="deptId" class="col-sm-2 col-form-label fw-semibold">Department ID:</label>
+      <!-- Main card -->
+      <div class="card shadow border-0 bg-white p-4">
 
-  <div class="col-sm-4">
-    <input
-      type="text"
-      id="deptId"
-      [(ngModel)]="deptId"
-      class="form-control"
-      placeholder="Enter Department ID"
-    />
-  </div>
+        <!-- Title -->
+        <h3 class="mb-4 fw-bold text-center text-primary">Employees Detail</h3>
 
-  <div class="col-sm-2">
-    <button class="btn btn-outline-primary w-100 fw-semibold" (click)="getEmployees()">
-      <i class="bi bi-search me-1"></i> Search
-    </button>
+        <!-- Department ID Search -->
+        <div class="row align-items-center gy-2 gx-3 mb-4">
+          <div class="col-md-3">
+            <label for="deptId" class="col-form-label fw-semibold">Department ID:</label>
+          </div>
+          <div class="col-md-5">
+            <input
+              type="text"
+              id="deptId"
+              [(ngModel)]="deptId"
+              class="form-control"
+              placeholder="Enter Department ID"
+            />
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary w-100 fw-semibold" (click)="getEmployees()">
+              <i class="bi bi-search me-2"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <!-- Success and Error Alerts -->
+        <div *ngIf="errorMessage" class="alert alert-danger mb-3">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="alert alert-success mb-3">{{ successMessage }}</div>
+
+        <!-- Employees Table -->
+        <table *ngIf="employees.length > 0" class="table table-bordered table-hover mt-3">
+          <thead class="table-light">
+            <tr>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Salary</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let emp of employees" style="cursor: pointer;">
+              <td (click)="goToEmployee(emp)">{{ emp.id }}</td>
+              <td (click)="goToEmployee(emp)">{{ emp.name }}</td>
+              <td (click)="goToEmployee(emp)">{{ emp.email }}</td>
+              <td (click)="goToEmployee(emp)">{{ emp.salary | currency }}</td>
+              <td class="text-center">
+                 <button class="btn btn-sm btn-outline-primary me-2" (click)="editEmployee(emp); $event.stopPropagation()">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteEmployees(emp.id); $event.stopPropagation()">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- No Employees Message -->
+        <div *ngIf="employees.length === 0 && !errorMessage" class="text-secondary text-center mt-3">
+          No employees found
+        </div>
+
+        <!-- Download PDF Button -->
+        <div class="text-end mt-4" *ngIf="employees.length > 0">
+          <button class="btn btn-outline-success px-4 py-2 fw-semibold" (click)="downloadEmployeesByDeptReport()">
+            <i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF
+          </button>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
-
-
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-
-    <table *ngIf="employees.length > 0" class="table table-bordered table-hover mt-3">
-    <thead class="table-light">
-      <tr>
-        <th>Employee ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Salary</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let emp of employees" style="cursor: pointer;">
-        <td (click)="goToEmployee(emp)">{{ emp.id }}</td>
-        <td (click)="goToEmployee(emp)">{{ emp.name }}</td>
-        <td (click)="goToEmployee(emp)">{{ emp.email }}</td>
-        <td (click)="goToEmployee(emp)">{{ emp.salary | currency }}</td>
-        <td class="text-center">
-          <button class="btn btn-sm btn-outline-danger" (click)="deleteEmployees(emp.id ); $event.stopPropagation()">
-            <i class="bi bi-trash"></i> Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-
-    <div *ngIf="employees.length === 0 && !errorMessage" class="text-secondary">
-      No employees found
-    </div>
-
-    <div class="text-end mt-3" *ngIf="employees.length > 0">
-    <button class="btn btn-outline-success px-4 py-2 fw-semibold" (click)="downloadEmployeesByDeptReport()">
-      <i class="bi bi-file-earmark-pdf-fill me-2"></i> Download PDF
-    </button>
-  </div>
-
-  </div>

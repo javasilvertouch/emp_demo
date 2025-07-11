@@ -13,6 +13,7 @@ public interface EmployeeService {
     void deleteEmployeeFromDepartment(String deptId, String empId);
     EmployeeDTO getEmployeeById(String empId);    
     EmployeeDTO getEmployeeByIdAndDepartments(String empId,String deptId);
+    EmployeeDTO updateEmployee(String id, EmployeeDTO employeeDTO);
     
     
 }

@@ -82,4 +82,17 @@ export class DepartmentEmployees {
     });
   }
 }
+
+editEmployee(emp: Employee) {
+  // You can either route to a form page:
+  console.log("Hello")
+  console.log(emp.id)
+  this.router.navigate(['/edit-employee', emp.id]);
+// this.router.navigate(['/employee', emp.id]);
+  // OR open an edit modal:
+  // this.selectedEmployee = { ...emp }; // clone to form model
+  // this.showEditModal = true;
+}
+
+
 }

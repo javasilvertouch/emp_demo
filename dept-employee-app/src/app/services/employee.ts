@@ -7,6 +7,7 @@ export interface Employee {
   name: string;
   email: string;
   salary: number;
+  position:string;
 }
 
 @Injectable({
@@ -37,5 +38,10 @@ export class EmployeeService {
   downloadEmployeesByDeptReport(): Observable<Blob> {
     return this.http.get(`${this.baseUrl}api/report/download`, { responseType: 'blob' });
   }
+
+ updateEmployee(empId: string, employeeData: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}employees/edit/${empId}`, employeeData);
+  }
+
   
 }

@@ -2,6 +2,7 @@
 package com.sttl.employees.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -114,4 +115,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		return new EmployeeDTO(emp.getId(), emp.getName(), emp.getEmail(), emp.getPosition(), emp.getSalary());
 	}
+	
+	
+	/**
+	 * Updates an existing employee's details.
+	 *
+	 * @param id  the ID of the employee to update
+	 * @param dto the EmployeeDTO containing updated employee details
+	 * @return the updated EmployeeDTO, or null if the employee was not found
+	 */
+	@Override
+    public EmployeeDTO updateEmployee(String id, EmployeeDTO dto) {
+        Optional<Employee> optionalEmp = employeeRepo.findById(id);
+        if (optionalEmp.isPresent()) {
+            Employee emp = optionalEmp.get();
+            emp.setName(dto.getName());
+            emp.setEmail(dto.getEmail());
+            emp.setPosition(dto.getPosition());
+            emp.setSalary(dto.getSalary());
+            Employee updated = employeeRepo.save(emp);
+            return new EmployeeDTO(updated.getId(), updated.getName(), updated.getEmail(), updated.getPosition(), updated.getSalary());
+        }
+        return null;
+    }
 }

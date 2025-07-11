@@ -38,7 +38,7 @@ public class ReportController {
         Map<String, Object> params = new HashMap<>();
         params.put("title", "Employee Report"); 
 
-        byte[] data = reportService.generateReport(name, params);
+        byte[] data = reportService.generateReport(params);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);

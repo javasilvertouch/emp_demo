@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h3>Employee Detail (ID: {{ employeeId }})</h3>
+  <h3>Employee List (ID: {{ employeeId }})</h3>
 
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -9,12 +9,17 @@
     <p><strong>Email:</strong> {{ employee.email }}</p>
     <p><strong>Salary:</strong> {{ employee.salary }}</p>
 
-    <button class="btn btn-danger" (click)="deleteEmployee()">Delete Employee</button>
-    <button class="btn btn-secondary ms-2" (click)="goBack()">Back</button>
+    <button class="btn btn-outline-danger px-4" (click)="deleteEmployee()">
+      <i class="bi bi-trash"></i> Delete
+    </button>
+
+    <button class="btn btn-outline-secondary px-4 ms-2" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
   </div>
 
   <ng-template #noData>
-    <p>No employee data available.</p>
+    <p>No Record Found.</p>
     <button class="btn btn-secondary" (click)="goBack()">Back</button>
   </ng-template>
 </div>

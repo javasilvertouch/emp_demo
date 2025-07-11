@@ -64,7 +64,6 @@ export class EmployeeDetail implements OnInit  {
   }
 }
 
-
   goBack() {
   this.router.navigate(['/']);
 }

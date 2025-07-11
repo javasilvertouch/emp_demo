@@ -16,6 +16,7 @@ export class DepartmentEmployees {
   deptId = '';
   employees: Employee[] = [];
   errorMessage = '';
+  successMessage = '';
 
   constructor(private employeeService: EmployeeService, private router: Router) {}
 
@@ -57,5 +58,28 @@ export class DepartmentEmployees {
     this.router.navigate(['/employee', emp.id]);
 
   }
-
+  
+ deleteEmployees(empId: string) {
+  if (confirm('Are you sure you want to delete this employee?')) {
+    this.employeeService.deleteEmployee(empId).subscribe({
+      next: (res) => {
+        console.log('Delete response:', res);
+        this.successMessage = 'Employee deleted successfully!';  
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 2000);
+       this.employees = this.employees.filter(emp => emp.id !== empId);   
+      },
+      error: (err) => {
+        console.error('Delete error:', err);
+        if (err.status === 200 && err.error instanceof SyntaxError) {
+          console.log('Received plain text success message:', err.text);
+          this.successMessage = err.text;         
+        } else {
+          this.errorMessage = 'Failed to delete employee';
+        }
+      }
+    });
+  }
+}
 }

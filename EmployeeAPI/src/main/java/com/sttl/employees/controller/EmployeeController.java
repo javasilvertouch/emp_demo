@@ -79,12 +79,7 @@ public class EmployeeController {
     public ResponseEntity<?> getEmployeesByDepartment(@PathVariable String deptId) {
     	List<EmployeeDTO> employees = service.getEmployeesByDepartmentAsDTO(deptId);
 
-        if (employees == null || employees.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("No employees found for department ID: " + deptId);
-        }
-
+        
         return ResponseEntity.ok(employees);
     }
 
